@@ -15,7 +15,7 @@ const CustomSelect: React.FC<Props> = (props) => {
     const {register, errors} = useFormContext();
 
 
-    return <FormControl isInvalid={!!errors[name]}>
+    return <FormControl isInvalid={!!errors[name]} mb={1}>
         <FormLabel>{label}</FormLabel>
         <Select name={name} ref={register({
             required: {
