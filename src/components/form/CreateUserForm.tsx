@@ -1,42 +1,46 @@
 import React, {useState} from "react";
-import {Button, Box, Text, HStack} from "@chakra-ui/react";
+import {
+    Button,
+    Box, Text, HStack
+} from "@chakra-ui/react";
+import CustomTextInput from "./CustomTextInput";
+import CustomSelect from "./CustomSelect";
 import {FormProvider, useForm} from "react-hook-form";
 import {User} from "../../types/User";
-import CustomTextInput from "../form/CustomTextInput";
-import CustomSelect from "../form/CustomSelect";
-import {Link, useHistory} from "react-router-dom";
-import {useAuth} from "../../contexts/AuthContext";
 import CustomAlert from "../common/CustomAlert";
+import { firestore} from "../../config/firebase";
 
-const Register: React.FC = (props) => {
+interface Props  {
+
+}
+
+
+const CreateUserForm: React.FC<Props> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    const {signup} = useAuth()!;
-    const history = useHistory();
+
     const methods = useForm<User>();
 
-    async function onSubmit(user: User) {
-        setErrorMessage(null);
+    const onSubmit = async (user: User) => {
         setIsLoading(true);
-
+        setErrorMessage(null);
         try {
-            await signup(user);
-            history.push('/login');
-        } catch (e) {
+            await firestore.collection('users').add(user);
+        }catch (e) {
             setErrorMessage(e.message);
         }
         setIsLoading(false);
-    }
+    };
 
     const displayErrorMessage = errorMessage !== null && <CustomAlert>{errorMessage}</CustomAlert>;
 
     return (
         <FormProvider {...methods}>
-            <Box w='100%' maxW='400px' m='auto' mt={10}>
+            <Box w='100%' maxW='500px' m='auto' mt={2} mb={2}>
                 <Box border='1px solid lightgray' borderRadius={4} p={4}>
                     <Text fontSize='3xl' textAlign={'center'} fontWeight={'bold'} mb={2}>
-                        Register
+                        Create a new user
                     </Text>
                     {displayErrorMessage}
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -74,19 +78,10 @@ const Register: React.FC = (props) => {
                         </Button>
                     </form>
                 </Box>
-                <HStack mt={2} justifyContent={'center'}>
-                    <Box>
-                        Already have an account?
-                    </Box>
-                    <Box color='blue'>
-                        <Link to={'/login'}>
-                            Sign in
-                        </Link>
-                    </Box>
-                </HStack>
+
             </Box>
         </FormProvider>
-    );
+    )
 };
 
-export default Register;
+export default CreateUserForm;

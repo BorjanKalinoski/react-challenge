@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {firestore} from "../config/firebase";
 import {useAuth} from "./AuthContext";
 import {User} from "../types/User";
@@ -6,28 +6,28 @@ import {User} from "../types/User";
 const UserDataContext = createContext<User | null>(null);
 
 const UserDataProvider: React.FC = ({children}) => {
-    const [userData, setUserData] = React.useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [userData, setUserData] = useState<User | null>(null);
     const {currentUser} = useAuth()!;
 
+    //fetch data for the logged in user from firestore
     useEffect(() => {
+        const uid = currentUser?.uid;
 
-        const fetchUserData = async () => {
-            const uid = currentUser?.uid;
-            try {
-                const doc = await firestore.collection('users').doc(uid).get();
+        firestore.collection('users').doc(uid).get()
+            .then((doc => {
                 if (doc.exists) {
                     setUserData(doc.data() as User);
                 }
-            } catch (e) {
-                setUserData(null);
-            }
-        };
-
-        fetchUserData();
+            }))
+            .catch(e => setUserData(null))
+            .finally(() => setIsLoading(false));
 
     }, [currentUser]);
 
-    return <UserDataContext.Provider value={userData}>{children}</UserDataContext.Provider>;
+    return <UserDataContext.Provider value={userData}>
+        {!isLoading && children}
+    </UserDataContext.Provider>;
 };
 
 

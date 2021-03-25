@@ -1,13 +1,13 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
+import firebase from "firebase";
 import {auth, firestore} from "../config/firebase";
 import {User} from "../types/User";
-import firebase from "firebase";
 
 type AuthContextType = {
     currentUser: firebase.User | null;
-    signup: (user: User) => Promise<void>
-    login: (user: User) => Promise<void>
-
+    signup: (user: User) => Promise<void>;
+    login: (user: User) => Promise<firebase.auth.UserCredential>;
+    logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -16,19 +16,25 @@ const AuthProvider: React.FC = ({children}) => {
     const [currentUser, setCurrentUser] = useState< firebase.User | null>(null);
     const [loading, setLoading] = useState(true)
 
-    async function signup(user: User): Promise<any> {
+    async function signup(user: User): Promise<void> {
         return auth.createUserWithEmailAndPassword(user.email, user.password!).then(response => {
             const uid = response.user?.uid;
             return firestore.collection('users').doc(uid).set({
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                id: uid,
+                createdAt: firebase.firestore.Timestamp.fromDate(new Date())
             });
         });
     }
 
-    async function login(user: User): Promise<any> {
+    async function login(user: User): Promise<firebase.auth.UserCredential> {
         return auth.signInWithEmailAndPassword(user.email, user.password!);
+    }
+
+    async function logout(): Promise<void> {
+        return auth.signOut();
     }
 
     useEffect(() => {
@@ -44,6 +50,7 @@ const AuthProvider: React.FC = ({children}) => {
         currentUser,
         login,
         signup,
+        logout
     };
 
 

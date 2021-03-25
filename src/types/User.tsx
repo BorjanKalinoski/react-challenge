@@ -1,6 +1,11 @@
+import firebase from "firebase";
+
 export interface User {
     name: string;
     email: string;
     password?: string;
-    role: 'admin' | 'moderator';
+    createdAt?: firebase.firestore.Timestamp;
+    role: UserRole;
 }
+
+export type UserRole = 'admin' | 'moderator';

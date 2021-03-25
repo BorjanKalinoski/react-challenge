@@ -19,6 +19,7 @@ const CustomTextInput: React.FC<Props> = (props) => {
 
     const {register, errors} = useFormContext();
 
+    console.log(errors[name]);
 
     return <FormControl isInvalid={!!errors[name]} mb={1}>
         <FormLabel>{label}</FormLabel>

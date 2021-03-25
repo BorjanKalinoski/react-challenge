@@ -5,7 +5,7 @@ import {User} from "../../types/User";
 import CustomTextInput from "../form/CustomTextInput";
 import {Link, useHistory} from "react-router-dom";
 import {useAuth} from "../../contexts/AuthContext";
-import CustomAlert from "../form/common/CustomAlert";
+import CustomAlert from "../common/CustomAlert";
 
 const Login: React.FC = (props) => {
     const methods = useForm<User>();
