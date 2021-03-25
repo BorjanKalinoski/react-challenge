@@ -1,5 +1,5 @@
 import firebase  from "firebase";
-import {User} from "../types/User";
+import {User} from "../../types/User";
 
 async function registerUser(user: User) {
     try {

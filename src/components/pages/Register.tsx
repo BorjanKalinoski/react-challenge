@@ -1,28 +1,35 @@
 import React, {useState} from "react";
 import {Button, Box, Text, HStack} from "@chakra-ui/react";
 import {FormProvider, useForm} from "react-hook-form";
-import {User} from "../types/User";
-import CustomTextInput from "./form/CustomTextInput";
-import CustomSelect from "./form/CustomSelect";
+import {User} from "../../types/User";
+import CustomTextInput from "../form/CustomTextInput";
+import CustomSelect from "../form/CustomSelect";
 import {Link, useHistory} from "react-router-dom";
-import {useAuth} from "../contexts/AuthContext";
+import {useAuth} from "../../contexts/AuthContext";
+import CustomAlert from "../form/common/CustomAlert";
 
 const Register: React.FC = (props) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
     const {signup} = useAuth()!;
     const history = useHistory();
     const methods = useForm<User>();
 
     async function onSubmit(user: User) {
+        setErrorMessage(null);
         setIsLoading(true);
+
         try {
             await signup(user);
             history.push('/');
         } catch (e) {
-            alert(e);
+            setErrorMessage(e.message);
         }
         setIsLoading(false);
     }
+
+    const displayErrorMessage = errorMessage !== null && <CustomAlert>{errorMessage}</CustomAlert>;
 
     return (
         <FormProvider {...methods}>
@@ -31,6 +38,7 @@ const Register: React.FC = (props) => {
                     <Text fontSize='3xl' textAlign={'center'} fontWeight={'bold'} mb={2}>
                         Register
                     </Text>
+                    {displayErrorMessage}
                     <form onSubmit={methods.handleSubmit(onSubmit)}>
                         <CustomTextInput
                             required

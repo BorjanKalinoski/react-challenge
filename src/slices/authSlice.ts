@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {AppThunk, RootState} from '../redux/store';
 import {User} from "../types/User";
-import authService from '../services/auth-service';
+import authService from '../archive/services/auth-service';
 
 interface AuthState {
     isLoading: boolean;
