@@ -10,8 +10,6 @@ interface Props extends RouteProps{
 const ProtectedRoute: React.FC<Props> = ({component: Component, ...others}) => {
     const {currentUser} = useAuth()!;
 
-    console.log('user is!', currentUser);
-
     return <Route {...others} render={(props) => currentUser
         ? <Component {...props}/>
         : <Redirect to='/login'/>}

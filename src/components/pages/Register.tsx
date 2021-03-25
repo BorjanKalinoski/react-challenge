@@ -22,7 +22,7 @@ const Register: React.FC = (props) => {
 
         try {
             await signup(user);
-            history.push('/');
+            history.push('/login');
         } catch (e) {
             setErrorMessage(e.message);
         }
