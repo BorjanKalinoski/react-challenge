@@ -36,13 +36,16 @@ const CreateUserForm: React.FC = (props) => {
             .catch((e) => console.log(e.message));
     };
 
+
+    const {reset, clearErrors} = methods;
+
     useEffect(() => {
         return () => {
-            methods.reset();
-            methods.clearErrors();
+            reset();
+            clearErrors();
             //reset form when modal unmounts
         };
-    }, []);
+    }, [reset, clearErrors]);
 
 
     const displayErrorMessage = errorMessage !== null && <CustomAlert>{errorMessage}</CustomAlert>;
