@@ -11,15 +11,15 @@ interface Props {
     errorMessage?: string;
     minLength?: number;
     maxLength?: number;
+    value?: string;
 }
 
 const CustomTextInput: React.FC<Props> = (props) => {
-    const {name, required = false, errorMessage = 'This field is required', placeholder = '', label, type = 'text', minLength, maxLength} = props;
+    const {name, required = false, errorMessage = 'This field is required', placeholder = '', label, type = 'text', minLength, value, maxLength} = props;
 
 
     const {register, errors} = useFormContext();
 
-    console.log(errors[name]);
 
     return <FormControl isInvalid={!!errors[name]} mb={1}>
         <FormLabel>{label}</FormLabel>
@@ -27,6 +27,7 @@ const CustomTextInput: React.FC<Props> = (props) => {
             type={type}
             name={name}
             placeholder={placeholder}
+            defaultValue={value}
             ref={
                 register({
                     required: {

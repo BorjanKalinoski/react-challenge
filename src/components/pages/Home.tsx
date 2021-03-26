@@ -1,43 +1,59 @@
 import React, {useEffect, useState} from "react";
-import {useUser} from "../../contexts/UserDataContext";
+import {useUser} from "../../contexts/UserContext";
 import {User} from "../../types/User";
 import {firestore} from "../../config/firebase";
-import { Container, Text, Button } from "@chakra-ui/react";
+import {
+    Container, Text, Button, VStack, Spinner,
+} from "@chakra-ui/react";
 import {useAuth} from "../../contexts/AuthContext";
-import CreateUserForm from "../form/CreateUserForm";
 import UserCard from "../UserCard";
+import CreateUserForm from "../form/CreateUserForm";
 
 const Home: React.FC = (props) => {
-    const [users, setUsers] = useState<User[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
     const {logout} = useAuth()!;
-    const user = useUser()!;
+    const {user, isUserLoading, canCreateUsers} = useUser()!
+
 
     useEffect(() => {
-
-        const unsubscribe = firestore.collection('users').onSnapshot(snapshot => {
-            const newUsers = snapshot.docs.map((doc) => ({
+        firestore.collection('users').onSnapshot((snapshot) => {
+            const newUsers: User[] = snapshot.docs.map((doc) => ({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data() as User
             }));
-            setUsers(newUsers as unknown as User[]);
+            setAllUsers(newUsers);
         });
-
-        return () => {
-            unsubscribe()
-        };
 
     }, []);
 
 
-    return <Container>
-        <Text textAlign='center' fontSize="3xl">Hello {user.name}</Text>
-        {user.role === 'admin' && <CreateUserForm/>}
+    if (!user || isUserLoading) {
+        return <Container textAlign={'center'} mt={10}>
+            <VStack>
+                <span>
+                    Loading user data
+                </span>
+                <Spinner/>
+            </VStack>
+        </Container>;
+    }
 
-        {users.length === 0 && <Text>No users to display </Text>}
-        {users.map((user, i: number) => <UserCard key={i} {...user}/>)}
+    const otherUsers = allUsers.filter(otherUser => otherUser.id !== user.id);
 
-        <Button onClick={() => logout()}>Log out!</Button>
+    return <Container textAlign='center'>
+        <VStack>
+            <Text textAlign='center' fontSize="3xl">
+                Hello {user?.name}
+            </Text>
 
+            {otherUsers.length === 0 && <Text>There are no users to display.. Create some!</Text>}
+            {otherUsers.map((user) => <UserCard
+                key={user.id}
+                {...user}
+              />)}
+            {canCreateUsers() && <CreateUserForm/>}
+            <Button onClick={() => logout()}>Log out!</Button>
+        </VStack>
     </Container>;
 };
 

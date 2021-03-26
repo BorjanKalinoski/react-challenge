@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {Button, Box, Text, HStack, AlertIcon, Alert, CloseButton, AlertDescription,  } from "@chakra-ui/react";
+import {Button, Box, Text, HStack,   } from "@chakra-ui/react";
 import {FormProvider, useForm} from "react-hook-form";
 import {User} from "../../types/User";
-import CustomTextInput from "../form/CustomTextInput";
+import CustomTextInput from "../form/fields/CustomTextInput";
 import {Link, useHistory} from "react-router-dom";
 import {useAuth} from "../../contexts/AuthContext";
 import CustomAlert from "../common/CustomAlert";
@@ -54,7 +54,7 @@ const Login: React.FC = (props) => {
                             label='Password'
                             type='password'
                         />
-                        <Button mt={1} colorScheme="teal" isLoading={isLoading} loadingText={'Submit'} type="submit">
+                        <Button mt={1} mr={2} colorScheme="teal" isLoading={isLoading} loadingText={'Submit'} type="submit">
                             Submit
                         </Button>
                     </form>

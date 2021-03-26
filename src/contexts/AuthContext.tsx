@@ -13,8 +13,8 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC = ({children}) => {
-    const [currentUser, setCurrentUser] = useState< firebase.User | null>(null);
-    const [loading, setLoading] = useState(true)
+    const [currentUser, setCurrentUser] = useState<firebase.User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     async function signup(user: User): Promise<void> {
         return auth.createUserWithEmailAndPassword(user.email, user.password!).then(response => {
@@ -23,7 +23,6 @@ const AuthProvider: React.FC = ({children}) => {
                 email: user.email,
                 name: user.name,
                 role: user.role,
-                id: uid,
                 createdAt: firebase.firestore.Timestamp.fromDate(new Date())
             });
         });

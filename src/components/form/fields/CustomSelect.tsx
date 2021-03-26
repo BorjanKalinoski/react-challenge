@@ -8,22 +8,26 @@ interface Props {
     required?: boolean;
     errorMessage?: string;
     placeholder?: string;
+    value?: string;
 }
 const CustomSelect: React.FC<Props> = (props) => {
-    const {name, label, required = false, errorMessage = 'This field is required', placeholder = '', children} = props;
+    const {name, label, required = false, errorMessage = 'This field is required', placeholder = '', children, value} = props;
 
     const {register, errors} = useFormContext();
 
 
     return <FormControl isInvalid={!!errors[name]} mb={1}>
         <FormLabel>{label}</FormLabel>
-        <Select name={name} ref={register({
-            required: {
-                message: errorMessage,
-                value: required
-            }
-        })}
-                placeholder={placeholder}
+        <Select
+            defaultValue={value}
+            name={name}
+            ref={register({
+                required: {
+                    message: errorMessage,
+                    value: required
+                }
+            })}
+            placeholder={placeholder}
         >
             {children}
         </Select>

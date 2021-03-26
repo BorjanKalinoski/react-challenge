@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import {Button, Box, Text, HStack} from "@chakra-ui/react";
 import {FormProvider, useForm} from "react-hook-form";
 import {User} from "../../types/User";
-import CustomTextInput from "../form/CustomTextInput";
-import CustomSelect from "../form/CustomSelect";
+import CustomTextInput from "../form/fields/CustomTextInput";
+import CustomSelect from "../form/fields/CustomSelect";
 import {Link, useHistory} from "react-router-dom";
 import {useAuth} from "../../contexts/AuthContext";
 import CustomAlert from "../common/CustomAlert";
@@ -68,6 +68,7 @@ const Register: React.FC = (props) => {
                         >
                             <option value="admin">Admin</option>
                             <option value="moderator">Moderator</option>
+                            <option value="regular">Regular</option>
                         </CustomSelect>
                         <Button mt={1} colorScheme="teal" isLoading={isLoading} loadingText={'Submit'} type="submit">
                             Submit
