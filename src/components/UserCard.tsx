@@ -1,10 +1,10 @@
 import React from "react";
-import {Text, VStack, HStack, } from "@chakra-ui/react";
-import {CloseIcon, } from "@chakra-ui/icons";
+import {Text, VStack, HStack,useDisclosure } from "@chakra-ui/react";
+import {CloseIcon, EditIcon, } from "@chakra-ui/icons";
 import firebase from "firebase";
 import {UserRole} from "../types/User";
 import {useUser} from "../contexts/UserContext";
-import EditUserForm from "./form/EditUserForm";
+import EditUserModalForm from "./form/EditUserModalForm";
 
 interface Props {
     name: string;
@@ -18,6 +18,7 @@ const UserCard: React.FC<Props> = (props) => {
 
     const {name, email, role, createdAt, id} = props;
     const {deleteUser, canDelete, canEdit} = useUser()!;
+    const {isOpen, onOpen, onClose} = useDisclosure();// hook for modal dialog
 
     const displayDate = `${createdAt?.toDate().toLocaleTimeString()} ${createdAt?.toDate().toLocaleDateString()}`;
 
@@ -60,7 +61,18 @@ const UserCard: React.FC<Props> = (props) => {
             onClick={() => deleteUser(id!)}
         />
         }
-        {canEdit() && <EditUserForm values={{name, email, role, id}}/>}
+        {canEdit() &&
+        <EditIcon
+            cursor='pointer'
+            color='blue'
+            position='absolute'
+            bottom='2'
+            right='2'
+            onClick={onOpen}
+        />
+        }
+        {canEdit() && <EditUserModalForm onClose={onClose} isOpen={isOpen} values={{name, email, role, id}}/>}
+
     </VStack>;
 };
 

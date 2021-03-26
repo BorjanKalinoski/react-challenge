@@ -1,39 +1,40 @@
-import {UserRole} from "../../types/User";
 import React, {useEffect} from "react";
-import {useUser} from "../../contexts/UserContext";
-import useFormHook from "./useFormHook";
-import {FormProvider, useForm} from "react-hook-form";
-import {Button, Text, useDisclosure} from "@chakra-ui/react";
-import CustomAlert from "../common/CustomAlert";
-import ModalForm from "./ModalForm";
+import {
+    Button,
+    Text
+} from "@chakra-ui/react";
 import CustomTextInput from "./fields/CustomTextInput";
 import CustomSelect from "./fields/CustomSelect";
+import {FormProvider, useForm} from "react-hook-form";
+import {UserRole} from "../../types/User";
+import CustomAlert from "../common/CustomAlert";
+import {useUser} from "../../contexts/UserContext";
+import useFormHook from "./useFormHook";
+import BaseModalForm from "./BaseModalForm";
+import firebase from "firebase";
 
-interface Props {
-    values: {
-        name?: string;
-        email?: string;
-        role?: UserRole;
-        id: string;
-    };
-}
-
-export interface EditUserFormType {
+export interface CreateUserFormType {
     name: string;
     role: UserRole;
     email: string;
+    createdAt: firebase.firestore.Timestamp;
 }
 
-const EditUserForm: React.FC<Props> = (props) => {
+interface Props{
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const CreateUserModalForm: React.FC<Props> = (props) => {
     const {canAssignRoles} = useUser()!;
-    const {onSubmit, isLoading, errorMessage} = useFormHook(props.values.id);
-    const methods = useForm<EditUserFormType>();
+    const {onSubmit, isLoading, errorMessage} = useFormHook();
+    const methods = useForm<CreateUserFormType>();
+    const {isOpen, onClose} = props;// hook for modal dialog
 
-    const {isOpen, onOpen, onClose} = useDisclosure();// hook for modal dialog
-
-    const submitForm = (values: EditUserFormType) => {
+    const submitForm = (values: CreateUserFormType) => {
         onSubmit({
             ...values,
+            createdAt: firebase.firestore.Timestamp.fromDate(new Date())
         })
             .then(() => onClose())
             .catch((e) => console.log(e.message));
@@ -51,43 +52,38 @@ const EditUserForm: React.FC<Props> = (props) => {
     }, [reset, clearErrors]);
 
 
-
-
     const displayErrorMessage = errorMessage !== null && <CustomAlert>{errorMessage}</CustomAlert>;
     return (
         <FormProvider {...methods}>
-            <Button onClick={onOpen}>
-                Edit user data
-            </Button>
-            <ModalForm isOpen={isOpen} onClose={onClose}>
+            <BaseModalForm isOpen={isOpen} onClose={onClose}>
                 <Text fontSize='3xl' textAlign={'center'} fontWeight={'bold'} mb={2}>
-                    Edit user data
+                    Create a new user
                 </Text>
                 {displayErrorMessage}
                 <form onSubmit={methods.handleSubmit(submitForm)} noValidate>
                     <CustomTextInput
+                        required
                         name='name'
                         label='Name'
                         placeholder='Admin Userson'
-                        value={props.values?.name}
                     />
                     <CustomTextInput
+                        required
                         name='email'
                         type='email'
                         label='Email'
                         placeholder='test@example.com'
-                        value={props.values?.email}
                     />
                     {
                         canAssignRoles() && <CustomSelect
+                            required
                             name='role'
                             label='Role'
                             placeholder='Select a role for the user'
-                            value={props.values?.role}
                         >
                             <option value="admin">Admin</option>
                             <option value="moderator">Moderator</option>
-                            <option value="moderator">Regular</option>
+                            <option value="regular">Regular</option>
                         </CustomSelect>
                     }
                     <Button mt={1} colorScheme="teal" isLoading={isLoading} loadingText={'Submit'}
@@ -95,9 +91,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                         Submit
                     </Button>
                 </form>
-            </ModalForm>
+            </BaseModalForm>
         </FormProvider>
     );
 };
 
-export default EditUserForm;
+export default CreateUserModalForm;

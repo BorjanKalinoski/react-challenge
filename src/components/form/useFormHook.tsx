@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {firestore} from "../../config/firebase";
-import {CreateUserFormType} from "./CreateUserForm";
-import {EditUserFormType} from "./EditUserForm";
+import {CreateUserFormType} from "./CreateUserModalForm";
+import {EditUserFormType} from "./EditUserModalForm";
 
 export default function useFormHook(id?: string) {
 

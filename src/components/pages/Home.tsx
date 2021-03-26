@@ -3,17 +3,17 @@ import {useUser} from "../../contexts/UserContext";
 import {User} from "../../types/User";
 import {firestore} from "../../config/firebase";
 import {
-    Container, Text, Button, VStack, Spinner,
+    Container, Text, Button, VStack, Spinner, useDisclosure,
 } from "@chakra-ui/react";
 import {useAuth} from "../../contexts/AuthContext";
 import UserCard from "../UserCard";
-import CreateUserForm from "../form/CreateUserForm";
+import CreateUserModalForm from "../form/CreateUserModalForm";
 
 const Home: React.FC = (props) => {
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const {logout} = useAuth()!;
     const {user, isUserLoading, canCreateUsers} = useUser()!
-
+    const {isOpen, onOpen, onClose} = useDisclosure();//for create user modal
 
     useEffect(() => {
         firestore.collection('users').onSnapshot((snapshot) => {
@@ -50,8 +50,13 @@ const Home: React.FC = (props) => {
             {otherUsers.map((user) => <UserCard
                 key={user.id}
                 {...user}
-              />)}
-            {canCreateUsers() && <CreateUserForm/>}
+            />)}
+            {canCreateUsers() && <>
+                <Button onClick={onOpen}>
+                    Create a new user
+                </Button>
+                <CreateUserModalForm onClose={onClose} isOpen={isOpen}/>
+            </>}
             <Button onClick={() => logout()}>Log out!</Button>
         </VStack>
     </Container>;

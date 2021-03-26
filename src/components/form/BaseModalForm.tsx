@@ -12,7 +12,7 @@ interface Props {
     isOpen: boolean;
 }
 
-const ModalForm: React.FC<Props> = (props) => {
+const BaseModalForm: React.FC<Props> = (props) => {
     const {children, onClose, isOpen} = props;
 
     return <Modal
@@ -28,4 +28,4 @@ const ModalForm: React.FC<Props> = (props) => {
         </ModalContent>
     </Modal>
 };
-export default ModalForm;
+export default BaseModalForm;
