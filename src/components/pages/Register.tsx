@@ -76,9 +76,9 @@ const Register: React.FC = (props) => {
               label="Role"
               placeholder="Select a role for the user"
             >
-              <option value="admin">Admin</option>
-              <option value="moderator">Moderator</option>
-              <option value="regular">Regular</option>
+              <option value="Admin">Admin</option>
+              <option value="Moderator">Moderator</option>
+              <option value="Regular">Regular</option>
             </CustomSelect>
             <Button
               mt={1}

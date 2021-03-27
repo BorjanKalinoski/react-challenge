@@ -75,9 +75,9 @@ const EditUserModalForm: React.FC<Props> = (props) => {
               placeholder="Select a role for the user"
               value={role}
             >
-              <option value="admin">Admin</option>
-              <option value="moderator">Moderator</option>
-              <option value="regular">Regular</option>
+              <option value="Admin">Admin</option>
+              <option value="Moderator">Moderator</option>
+              <option value="Viewer">Viewer</option>
             </CustomSelect>
           )}
           <Button
