@@ -5,19 +5,19 @@ import Register from './components/pages/Register';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import ProtectedRoute from './components/routes/ProtectedRoute';
-import UserProvider from './contexts/UserContext';
+import UserDataProvider from './contexts/UserDataContext';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <UserProvider>
+        <UserDataProvider>
           <Switch>
             <ProtectedRoute exact path="/" component={Home} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
           </Switch>
-        </UserProvider>
+        </UserDataProvider>
       </AuthProvider>
     </Router>
   );

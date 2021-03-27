@@ -1,22 +1,22 @@
 import React from 'react';
+import firebase from 'firebase';
 import { Text, VStack, HStack, useDisclosure } from '@chakra-ui/react';
 import { CloseIcon, EditIcon } from '@chakra-ui/icons';
-import firebase from 'firebase';
-import { UserRole } from '../types/User';
-import { useUser } from '../contexts/UserContext';
-import EditUserModalForm from './form/EditUserModalForm';
+import { useUserData } from '../../contexts/UserDataContext';
+import EditUserModalForm from '../form/modals/EditUserModalForm';
+import { UserRoles } from '../../types/User';
 
 interface Props {
   name: string;
   email: string;
-  role: UserRole;
-  createdAt: firebase.firestore.Timestamp;
+  role: UserRoles;
+  createdAt?: firebase.firestore.Timestamp;
   id: string;
 }
 
 const UserCard: React.FC<Props> = (props) => {
   const { name, email, role, createdAt, id } = props;
-  const { deleteUser, canDelete, canEdit } = useUser()!;
+  const { deleteUser, canDelete, canEdit } = useUserData()!;
   const { isOpen, onOpen, onClose } = useDisclosure(); // hook for modal dialog
 
   const displayDate = `${createdAt
@@ -24,14 +24,7 @@ const UserCard: React.FC<Props> = (props) => {
     .toLocaleTimeString()} ${createdAt?.toDate().toLocaleDateString()}`;
 
   return (
-    <VStack
-      w="100%"
-      border="1px solid gray"
-      borderRadius={2}
-      mb={1}
-      p={1}
-      position="relative"
-    >
+    <VStack w="100%" border="1px solid gray" borderRadius={2} mb={1} p={1} position="relative">
       <HStack>
         {!role ? (
           <Text as="span">
@@ -75,11 +68,7 @@ const UserCard: React.FC<Props> = (props) => {
         />
       )}
       {canEdit() && (
-        <EditUserModalForm
-          onClose={onClose}
-          isOpen={isOpen}
-          values={{ name, email, role, id }}
-        />
+        <EditUserModalForm onClose={onClose} isOpen={isOpen} values={{ name, email, role, id }} />
       )}
     </VStack>
   );

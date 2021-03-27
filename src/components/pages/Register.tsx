@@ -1,27 +1,42 @@
 import React, { useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { User } from '../../types/User';
+import { UserRoles } from '../../types/User';
 import CustomTextInput from '../form/fields/CustomTextInput';
 import CustomSelect from '../form/fields/CustomSelect';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import CustomAlert from '../CustomAlert';
+import { useUserData } from '../../contexts/UserDataContext';
+import useResetForm from '../form/useResetForm';
+
+interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRoles;
+}
 
 const Register: React.FC = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const { signup } = useAuth()!;
-  const history = useHistory();
-  const methods = useForm<User>();
+  const { storeUser } = useUserData()!;
 
-  async function onSubmit(user: User) {
+  const history = useHistory();
+
+  const methods = useForm<RegisterFormData>();
+  useResetForm(methods.reset, methods.clearErrors);
+
+  async function onSubmit(formData: RegisterFormData) {
     setErrorMessage(null);
     setIsLoading(true);
 
     try {
-      await signup(user);
+      const response = await signup(formData.email, formData.password);
+      await storeUser(response.user?.uid!, formData);
+
       history.push('/login');
     } catch (e) {
       setErrorMessage(e.message);
@@ -29,9 +44,7 @@ const Register: React.FC = (props) => {
     setIsLoading(false);
   }
 
-  const displayErrorMessage = errorMessage !== null && (
-    <CustomAlert>{errorMessage}</CustomAlert>
-  );
+  const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;
 
   return (
     <FormProvider {...methods}>
@@ -42,12 +55,7 @@ const Register: React.FC = (props) => {
           </Text>
           {displayErrorMessage}
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <CustomTextInput
-              required
-              name="name"
-              label="Name"
-              placeholder="Admin Userson"
-            />
+            <CustomTextInput required name="name" label="Name" placeholder="Admin Userson" />
             <CustomTextInput
               required
               name="email"

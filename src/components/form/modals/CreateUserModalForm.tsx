@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { Button, Text } from '@chakra-ui/react';
-import CustomTextInput from './fields/CustomTextInput';
-import CustomSelect from './fields/CustomSelect';
-import { FormProvider, useForm } from 'react-hook-form';
-import { UserRole } from '../../types/User';
-import CustomAlert from '../CustomAlert';
-import { useUser } from '../../contexts/UserContext';
-import useFormHook from './useFormHook';
-import BaseModalForm from './BaseModalForm';
+import React, { useState } from 'react';
 import firebase from 'firebase';
+import { Button, Text } from '@chakra-ui/react';
+import { FormProvider, useForm } from 'react-hook-form';
+import CustomTextInput from '../fields/CustomTextInput';
+import CustomSelect from '../fields/CustomSelect';
+import { User, UserRoles } from '../../../types/User';
+import CustomAlert from '../../CustomAlert';
+import { useUserData } from '../../../contexts/UserDataContext';
+import ModalFormContainer from './ModalFormContainer';
+import useResetForm from '../useResetForm';
 
-export interface CreateUserFormType {
+export interface CreateUserFormData {
   name: string;
-  role: UserRole;
+  role: UserRoles;
   email: string;
   createdAt: firebase.firestore.Timestamp;
 }
@@ -23,47 +23,39 @@ interface Props {
 }
 
 const CreateUserModalForm: React.FC<Props> = (props) => {
-  const { canAssignRoles } = useUser()!;
-  const { onSubmit, isLoading, errorMessage } = useFormHook();
-  const methods = useForm<CreateUserFormType>();
   const { isOpen, onClose } = props; // hook for modal dialog
 
-  const submitForm = (values: CreateUserFormType) => {
-    onSubmit({
-      ...values,
-      createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-    })
-      .then(() => onClose())
-      .catch((e) => console.log(e.message));
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const methods = useForm<CreateUserFormData>();
+  useResetForm(methods.reset, methods.clearErrors);
+
+  const { canAssignRoles, createNewUser } = useUserData()!;
+
+  const submitForm = async (formData: CreateUserFormData) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      await createNewUser(formData as User);
+      onClose();
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
+    setIsLoading(false);
   };
 
-  const { reset, clearErrors } = methods;
+  const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;
 
-  useEffect(() => {
-    return () => {
-      reset();
-      clearErrors();
-      //reset form when modal unmounts
-    };
-  }, [reset, clearErrors]);
-
-  const displayErrorMessage = errorMessage !== null && (
-    <CustomAlert>{errorMessage}</CustomAlert>
-  );
   return (
     <FormProvider {...methods}>
-      <BaseModalForm isOpen={isOpen} onClose={onClose}>
+      <ModalFormContainer isOpen={isOpen} onClose={onClose}>
         <Text fontSize="3xl" textAlign={'center'} fontWeight={'bold'} mb={2}>
           Create a new user
         </Text>
         {displayErrorMessage}
         <form onSubmit={methods.handleSubmit(submitForm)} noValidate>
-          <CustomTextInput
-            required
-            name="name"
-            label="Name"
-            placeholder="Admin Userson"
-          />
+          <CustomTextInput required name="name" label="Name" placeholder="Admin Userson" />
           <CustomTextInput
             required
             name="email"
@@ -71,6 +63,7 @@ const CreateUserModalForm: React.FC<Props> = (props) => {
             label="Email"
             placeholder="test@example.com"
           />
+          <CustomTextInput required name="password" type="password" label="Password" />
           {canAssignRoles() && (
             <CustomSelect
               required
@@ -93,7 +86,7 @@ const CreateUserModalForm: React.FC<Props> = (props) => {
             Submit
           </Button>
         </form>
-      </BaseModalForm>
+      </ModalFormContainer>
     </FormProvider>
   );
 };

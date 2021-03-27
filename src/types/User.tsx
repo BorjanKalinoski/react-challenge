@@ -1,12 +1,16 @@
 import firebase from 'firebase';
 
 export interface User {
+  id?: string;
   name: string;
   email: string;
   password?: string;
-  createdAt: firebase.firestore.Timestamp;
-  role: UserRole;
-  id: string;
+  role: UserRoles;
+  createdAt?: firebase.firestore.Timestamp;
 }
 
-export type UserRole = 'admin' | 'moderator' | 'regular';
+export enum UserRoles {
+  Admin = 'admin',
+  Moderator = 'moderator',
+  Regular = 'regular',
+}

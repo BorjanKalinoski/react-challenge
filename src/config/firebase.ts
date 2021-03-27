@@ -12,8 +12,17 @@ const firebaseConfig = {
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
+const adminApp = firebase.initializeApp(firebaseConfig, 'adminApp');
 
 export const auth = firebaseApp.auth();
 export const firestore = firebaseApp.firestore();
+export const adminAuth = adminApp.auth();
+
+////////
+//TYPES
+////////
+export type FirebaseUser = firebase.User;
+export type UserCredential = firebase.auth.UserCredential;
+export type DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 export default firebaseApp;

@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useUser } from '../../contexts/UserContext';
-import { User } from '../../types/User';
-import { firestore } from '../../config/firebase';
-import {
-  Container,
-  Text,
-  Button,
-  VStack,
-  Spinner,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Container, Text, Button, VStack, Spinner, useDisclosure } from '@chakra-ui/react';
 import { useAuth } from '../../contexts/AuthContext';
-import UserCard from '../UserCard';
-import CreateUserModalForm from '../form/CreateUserModalForm';
+import { firestore } from '../../config/firebase';
+import { useUserData } from '../../contexts/UserDataContext';
+import { User } from '../../types/User';
+import UserCard from '../user/UserCard';
+import CreateUserModalForm from '../form/modals/CreateUserModalForm';
 
 const Home: React.FC = (props) => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { logout } = useAuth()!;
-  const { user, isUserLoading, canCreateUsers } = useUser()!;
-  const { isOpen, onOpen, onClose } = useDisclosure(); //for create user modal
+
+  const { currentUser, isLoadingUser, canCreateUsers } = useUserData()!;
 
   useEffect(() => {
     firestore.collection('users').onSnapshot((snapshot) => {
@@ -30,7 +25,7 @@ const Home: React.FC = (props) => {
     });
   }, []);
 
-  if (!user || isUserLoading) {
+  if (isLoadingUser || !currentUser) {
     return (
       <Container textAlign={'center'} mt={10}>
         <VStack>
@@ -41,20 +36,18 @@ const Home: React.FC = (props) => {
     );
   }
 
-  const otherUsers = allUsers.filter((otherUser) => otherUser.id !== user.id);
+  const otherUsers = allUsers.filter((otherUser) => otherUser.id !== currentUser.id);
 
   return (
     <Container textAlign="center">
       <VStack>
         <Text textAlign="center" fontSize="3xl">
-          Hello {user?.name}
+          Hello {currentUser?.name}
         </Text>
 
-        {otherUsers.length === 0 && (
-          <Text>There are no users to display.. Create some!</Text>
-        )}
+        {otherUsers.length === 0 && <Text>There are no users to display.. Create some!</Text>}
         {otherUsers.map((user) => (
-          <UserCard key={user.id} {...user} />
+          <UserCard key={user.id!} id={user.id!} {...user} />
         ))}
         {canCreateUsers() && (
           <>

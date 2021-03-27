@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { User } from '../../types/User';
 import CustomTextInput from '../form/fields/CustomTextInput';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import CustomAlert from '../CustomAlert';
+import useResetForm from '../form/useResetForm';
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 const Login: React.FC = (props) => {
-  const methods = useForm<User>();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const methods = useForm<LoginFormData>();
+  useResetForm(methods.reset, methods.clearErrors);
 
   const history = useHistory();
   const { login } = useAuth()!;
 
-  async function onSubmit(user: User) {
+  async function onSubmit({ email, password }: LoginFormData) {
     setErrorMessage(null);
     setIsLoading(true);
 
     try {
-      await login(user);
+      await login(email, password);
+
       history.push('/');
     } catch (e) {
       setErrorMessage(e.message);
@@ -28,9 +36,7 @@ const Login: React.FC = (props) => {
     setIsLoading(false);
   }
 
-  const displayErrorMessage = errorMessage !== null && (
-    <CustomAlert>{errorMessage}</CustomAlert>
-  );
+  const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;
 
   return (
     <FormProvider {...methods}>

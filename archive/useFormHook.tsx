@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { firestore } from '../../config/firebase';
-import { CreateUserFormType } from './CreateUserModalForm';
-import { EditUserFormType } from './EditUserModalForm';
+import { firestore } from '../src/config/firebase';
+import { CreateUserFormType } from '../src/components/form/modals/CreateUserModalForm';
+import { EditUserFormType } from '../src/components/form/modals/EditUserModalForm';
 
 export default function useFormHook(id?: string) {
   const [isLoading, setIsLoading] = useState(false);
