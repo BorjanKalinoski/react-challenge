@@ -5,7 +5,7 @@ type AuthContextType = {
   userAuthData: FirebaseUser | null;
   signup: (email: string, password: string) => Promise<UserCredential>;
   login: (email: string, password: string) => Promise<UserCredential>;
-  logout: () => Promise<void>;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,7 +22,7 @@ const AuthProvider: React.FC = ({ children }) => {
     return auth.signInWithEmailAndPassword(email, password);
   }
 
-  async function logout(): Promise<void> {
+  async function signOut(): Promise<void> {
     return auth.signOut();
   }
 
@@ -33,13 +33,13 @@ const AuthProvider: React.FC = ({ children }) => {
     });
 
     return unsubscribe;
-  }, [auth]);
+  }, []);
 
   const value = {
     userAuthData,
     signup,
     login,
-    logout,
+    signOut,
   };
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
