@@ -1,13 +1,13 @@
 import React from 'react';
 import { Container, Button, VStack, useDisclosure } from '@chakra-ui/react';
-import CreateUserModalForm from '../form/modals/CreateUserModalForm';
-import Header from '../Header';
-import UsersList from '../user/UsersList';
-import Loading from '../Loading';
 import { useUserData } from '../../contexts/UserDataContext';
+import CreateUserModalForm from '../form/modals/CreateUserModalForm';
+import Header from '../common/Header';
+import Loading from '../common/Loading';
+import UsersList from '../user/UsersList';
 
 const Home: React.FC = (props) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure(); //hook for modal dialog (Create new user)
 
   const { currentUser, isLoadingUser, canCreateUsers } = useUserData()!;
 
@@ -25,7 +25,7 @@ const Home: React.FC = (props) => {
               <Button mb={1} onClick={onOpen}>
                 Create a new user
               </Button>
-              <CreateUserModalForm onClose={onClose} isOpen={isOpen} />
+              {isModalOpen && <CreateUserModalForm onClose={onClose} isOpen={isModalOpen} />}
             </>
           )}
           <UsersList />

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
+import { Link, useHistory } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
-import { UserRoles } from '../../types/User';
+import { useUserData } from '../../contexts/UserDataContext';
 import CustomTextInput from '../form/fields/CustomTextInput';
 import CustomSelect from '../form/fields/CustomSelect';
-import { Link, useHistory } from 'react-router-dom';
-import CustomAlert from '../CustomAlert';
-import { useUserData } from '../../contexts/UserDataContext';
+import CustomAlert from '../common/CustomAlert';
+import { UserRoles } from '../../types/User';
 
 interface RegisterFormData {
   name: string;
@@ -19,11 +19,11 @@ const Register: React.FC = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const { createUser } = useUserData()!;
+  const methods = useForm<RegisterFormData>();
 
   const history = useHistory();
 
-  const methods = useForm<RegisterFormData>();
+  const { createUser } = useUserData()!;
 
   async function onSubmit(formData: RegisterFormData) {
     setErrorMessage(null);
@@ -74,7 +74,7 @@ const Register: React.FC = (props) => {
             >
               <option value="Admin">Admin</option>
               <option value="Moderator">Moderator</option>
-              <option value="Regular">Regular</option>
+              <option value="Viewer">Viewer</option>
             </CustomSelect>
             <Button
               mt={1}
@@ -87,7 +87,7 @@ const Register: React.FC = (props) => {
             </Button>
           </form>
         </Box>
-        <HStack mt={2} justifyContent={'center'}>
+        <HStack mt={2} justifyContent="center">
           <Box>Already have an account?</Box>
           <Box color="blue">
             <Link to={'/login'}>Sign in</Link>

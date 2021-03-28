@@ -2,7 +2,6 @@ import React from 'react';
 import firebase from 'firebase';
 import { Text, VStack, HStack, useDisclosure, useColorMode, Flex } from '@chakra-ui/react';
 import { CloseIcon, EditIcon } from '@chakra-ui/icons';
-import dayjs from 'dayjs';
 import { FaUserCircle } from 'react-icons/fa';
 import EditUserModalForm from '../form/modals/EditUserModalForm';
 import { UserRoles } from '../../types/User';
@@ -19,13 +18,14 @@ interface Props {
 const UserCard: React.FC<Props> = (props) => {
   const { name, email, role, createdAt, id } = props;
 
-  const { isOpen, onOpen, onClose } = useDisclosure(); // hook for modal dialog
+  const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure(); // hook for modal dialog
   const { colorMode } = useColorMode();
 
   const { deleteUser, canDelete, canEdit } = useUserData()!;
 
-  const displayDate = dayjs(createdAt?.toDate()).format('DD/MM/YYYY HH:MM');
-  const valueFont = 'bold';
+  const valueFontWeight = 'bold';
+
+  const displayDate = createdAt?.toDate().toLocaleString();
 
   return (
     <VStack
@@ -45,21 +45,24 @@ const UserCard: React.FC<Props> = (props) => {
         <VStack w="100%" align="flex-start">
           <HStack>
             <Text>Name: </Text>
-            <Text fontWeight={valueFont}>{name}</Text>
+            <Text fontWeight={valueFontWeight}>{name}</Text>
           </HStack>
           <HStack>
             <Text>Role: </Text>
-            <Text color={colorMode === 'light' ? 'cyan.800' : '#eebe60'} fontWeight={valueFont}>
+            <Text
+              color={colorMode === 'light' ? 'cyan.800' : '#eebe60'}
+              fontWeight={valueFontWeight}
+            >
               {role || 'Viewer'}
             </Text>
           </HStack>
           <HStack>
             <Text>Email: </Text>
-            <Text fontWeight={valueFont}>{email}</Text>
+            <Text fontWeight={valueFontWeight}>{email}</Text>
           </HStack>
           <HStack>
             <Text>Joined: </Text>
-            <Text fontWeight={valueFont}>{displayDate}</Text>
+            <Text fontWeight={valueFontWeight}>{displayDate}</Text>
           </HStack>
         </VStack>
       </HStack>
@@ -83,7 +86,13 @@ const UserCard: React.FC<Props> = (props) => {
             left="3"
             onClick={onOpen}
           />
-          <EditUserModalForm onClose={onClose} isOpen={isOpen} values={{ name, email, role, id }} />
+          {isModalOpen && (
+            <EditUserModalForm
+              onClose={onClose}
+              isOpen={isModalOpen}
+              values={{ name, email, role, id }}
+            />
+          )}
         </>
       )}
     </VStack>

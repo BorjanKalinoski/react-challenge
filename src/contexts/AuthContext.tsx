@@ -6,9 +6,7 @@ interface AuthUserData {
 }
 
 type AuthContextType = {
-  // authUserData: User | null;
   authUserData: AuthUserData | null;
-
   isLoadingUser: boolean;
 
   login: (email: string, password: string) => Promise<void>;

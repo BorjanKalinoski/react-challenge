@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Button, Text } from '@chakra-ui/react';
 import { UserRoles } from '../../../types/User';
-import CustomAlert from '../../CustomAlert';
+import CustomAlert from '../../common/CustomAlert';
 import ModalFormContainer from './ModalFormContainer';
 import CustomTextInput from '../fields/CustomTextInput';
 import CustomSelect from '../fields/CustomSelect';
@@ -38,15 +38,6 @@ const EditUserModalForm: React.FC<Props> = (props) => {
 
   const { editUser, canAssignRoles } = useUserData()!;
 
-  // The states of the modal dialog are preserved even when the dialog is closed
-  // That is because it gets mounted and stays mounted while we stay on the same screen where it resides
-  // So, to reset the states we need to see when it get closed
-  useEffect(() => {
-    if (isOpen === false) {
-      setErrorMessage(null);
-    }
-  }, [isOpen]);
-
   const submitForm = async (formData: EditUserFormData) => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -66,7 +57,7 @@ const EditUserModalForm: React.FC<Props> = (props) => {
           Edit user data
         </Text>
         {displayErrorMessage}
-        <form onSubmit={methods.handleSubmit(submitForm)} noValidate>
+        <form onSubmit={methods.handleSubmit(submitForm)}>
           <CustomTextInput name="name" label="Name" placeholder="Admin Userson" value={name} />
           <CustomTextInput
             name="email"

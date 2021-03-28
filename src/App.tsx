@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import AuthProvider from './contexts/AuthContext';
+import UserDataProvider from './contexts/UserDataContext';
 import Register from './components/pages/Register';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import ProtectedRoute from './components/routes/ProtectedRoute';
-import UserDataProvider from './contexts/UserDataContext';
 
 function App() {
   return (

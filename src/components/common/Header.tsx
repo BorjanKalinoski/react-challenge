@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Flex, Text, HStack, useColorMode } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { useAuth } from '../contexts/AuthContext';
-import { useUserData } from '../contexts/UserDataContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useUserData } from '../../contexts/UserDataContext';
 
 const Header: React.FC = (props) => {
   const { signOut } = useAuth()!;
@@ -18,10 +18,10 @@ const Header: React.FC = (props) => {
         sm: 'row',
       }}
       justify="space-between"
+      align="center"
       py={3}
       px={10}
-      align="center"
-      borderBottom="0.5px solid rgba(0,0,0,0.35)"
+      borderBottom="0.5px solid rgba(0, 0, 0, 0.35)"
     >
       <Text textAlign="center" fontSize="2xl" fontWeight="semibold">
         Welcome {currentUser?.name}

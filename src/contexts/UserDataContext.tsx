@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import firebase from 'firebase';
 import { DocumentSnapshot, firestore } from '../config/firebase';
 import { User, UserRoles } from '../types/User';
@@ -26,9 +26,10 @@ const UserDataContext = createContext<UserDataContextType | null>(null);
 const UserDataProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+
   const { authUserData } = useAuth()!;
 
-  //fetch the logged in user data from firestore
+  //fetch data for the logged in user from firestore
   useEffect(() => {
     const id = authUserData?.id;
 
@@ -49,6 +50,7 @@ const UserDataProvider: React.FC = ({ children }) => {
   ///////////////////
   //USER CRUD OPERATIONS
   ///////////////////
+
   async function fetchUser(id: string) {
     return firestore.collection('users').doc(id).get();
   }
@@ -58,8 +60,7 @@ const UserDataProvider: React.FC = ({ children }) => {
   }
 
   async function editUser(userData: User, id: string) {
-    // make sure the new email does not exists on other accounts
-
+    // make sure there email is unique across all users
     const snapshot = await firestore
       .collection('users')
       .where('email', '==', userData.email)

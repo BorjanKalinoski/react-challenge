@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
-import { FormProvider, useForm } from 'react-hook-form';
-import CustomTextInput from '../form/fields/CustomTextInput';
 import { Link, useHistory } from 'react-router-dom';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
-import CustomAlert from '../CustomAlert';
+import CustomTextInput from '../form/fields/CustomTextInput';
+import CustomAlert from '../common/CustomAlert';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 
 interface LoginFormData {
@@ -20,6 +20,7 @@ const Login: React.FC = (props) => {
   const methods = useForm<LoginFormData>();
 
   const history = useHistory();
+
   const { login } = useAuth()!;
 
   async function onSubmit({ email, password }: LoginFormData) {
@@ -59,7 +60,6 @@ const Login: React.FC = (props) => {
             />
             <Button
               mt={1}
-              mr={2}
               colorScheme="teal"
               isLoading={isLoading}
               loadingText={'Submit'}
