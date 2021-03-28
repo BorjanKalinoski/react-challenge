@@ -6,7 +6,6 @@ import CustomAlert from '../../CustomAlert';
 import ModalFormContainer from './ModalFormContainer';
 import CustomTextInput from '../fields/CustomTextInput';
 import CustomSelect from '../fields/CustomSelect';
-import useResetForm from '../useResetForm';
 import { useUserData } from '../../../contexts/UserDataContext';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 
@@ -36,9 +35,17 @@ const EditUserModalForm: React.FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const methods = useForm<EditUserFormData>();
-  useResetForm(methods.reset, methods.clearErrors);
 
   const { editUser, canAssignRoles } = useUserData()!;
+
+  // The states of the modal dialog are preserved even when the dialog is closed
+  // That is because it gets mounted and stays mounted while we stay on the same screen where it resides
+  // So, to reset the states we need to see when it get closed
+  useEffect(() => {
+    if (isOpen === false) {
+      setErrorMessage(null);
+    }
+  }, [isOpen]);
 
   const submitForm = async (formData: EditUserFormData) => {
     setIsLoading(true);

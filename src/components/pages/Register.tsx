@@ -6,7 +6,6 @@ import CustomTextInput from '../form/fields/CustomTextInput';
 import CustomSelect from '../form/fields/CustomSelect';
 import { Link, useHistory } from 'react-router-dom';
 import CustomAlert from '../CustomAlert';
-import useResetForm from '../form/useResetForm';
 import { useUserData } from '../../contexts/UserDataContext';
 
 interface RegisterFormData {
@@ -25,7 +24,6 @@ const Register: React.FC = (props) => {
   const history = useHistory();
 
   const methods = useForm<RegisterFormData>();
-  useResetForm(methods.reset, methods.clearErrors);
 
   async function onSubmit(formData: RegisterFormData) {
     setErrorMessage(null);

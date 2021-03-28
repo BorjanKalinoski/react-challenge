@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import firebase from 'firebase';
 import { Button, Text } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -8,7 +8,6 @@ import { User, UserRoles } from '../../../types/User';
 import CustomAlert from '../../CustomAlert';
 import { useUserData } from '../../../contexts/UserDataContext';
 import ModalFormContainer from './ModalFormContainer';
-import useResetForm from '../useResetForm';
 
 export interface CreateUserFormData {
   name: string;
@@ -22,8 +21,6 @@ interface Props {
   onClose: () => void;
 }
 
-//Pri kreiranje na nov user, sakam da se pojavi default value Viewer dokolku nemam privilegii za editiranje
-
 const CreateUserModalForm: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props; // hook for modal dialog
 
@@ -31,9 +28,17 @@ const CreateUserModalForm: React.FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const methods = useForm<CreateUserFormData>();
-  useResetForm(methods.reset, methods.clearErrors);
 
   const { canAssignRoles, createUser } = useUserData()!;
+
+  // The states of the modal dialog are preserved even when the dialog is closed
+  // That is because it gets mounted and stays mounted while we stay on the same screen where it resides
+  // So, to reset the states we need to see when it get closed
+  useEffect(() => {
+    if (isOpen === false) {
+      setErrorMessage(null);
+    }
+  }, [isOpen]);
 
   const submitForm = async (formData: CreateUserFormData) => {
     setIsLoading(true);

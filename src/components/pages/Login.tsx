@@ -5,7 +5,6 @@ import CustomTextInput from '../form/fields/CustomTextInput';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import CustomAlert from '../CustomAlert';
-import useResetForm from '../form/useResetForm';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 
 interface LoginFormData {
@@ -19,7 +18,6 @@ const Login: React.FC = (props) => {
   const isMountedRef = useIsMountedRef();
 
   const methods = useForm<LoginFormData>();
-  useResetForm(methods.reset, methods.clearErrors);
 
   const history = useHistory();
   const { login } = useAuth()!;
