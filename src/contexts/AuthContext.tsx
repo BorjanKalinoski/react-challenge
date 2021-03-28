@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { firestore } from '../config/firebase';
-import { User } from '../types/User';
 
 interface AuthUserData {
   id: string;
@@ -15,11 +14,6 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
-
-//TODO
-// 1. Check if user exists on sign up
-// 2. See if you can merge the two providers
-//  - protected route, etc etc
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

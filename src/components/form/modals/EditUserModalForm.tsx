@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Button, Text } from '@chakra-ui/react';
-import { User, UserRoles } from '../../../types/User';
+import { UserRoles } from '../../../types/User';
 import CustomAlert from '../../CustomAlert';
 import ModalFormContainer from './ModalFormContainer';
 import CustomTextInput from '../fields/CustomTextInput';
 import CustomSelect from '../fields/CustomSelect';
 import useResetForm from '../useResetForm';
 import { useUserData } from '../../../contexts/UserDataContext';
+import useIsMountedRef from '../../../hooks/useIsMountedRef';
 
 interface Props {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export interface EditUserFormData {
 const EditUserModalForm: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props; // hook for modal dialog
   const { id, name, email, role } = props.values;
+  const isMountedRef = useIsMountedRef();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -41,13 +43,11 @@ const EditUserModalForm: React.FC<Props> = (props) => {
   const submitForm = async (formData: EditUserFormData) => {
     setIsLoading(true);
     setErrorMessage(null);
-    try {
-      await editUser(formData as User, id);
-      onClose();
-    } catch (e) {
-      setErrorMessage(e.message);
-    }
-    setIsLoading(false);
+
+    editUser(formData, id)
+      .then(() => isMountedRef.current && onClose())
+      .catch((e) => isMountedRef.current && setErrorMessage(e.message))
+      .finally(() => isMountedRef.current && setIsLoading(false));
   };
 
   const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;

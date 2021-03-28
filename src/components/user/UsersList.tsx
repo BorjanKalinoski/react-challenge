@@ -14,7 +14,7 @@ const UsersList: React.FC = () => {
 
   //set up listener to fetch all other users
   useEffect(() => {
-    firestore
+    const unsubscribe = firestore
       .collection('users')
       .where('email', '!=', currentUser?.email)
       .onSnapshot((snapshot) => {
@@ -26,6 +26,10 @@ const UsersList: React.FC = () => {
         setOtherUsers(users);
         setIsLoading(false);
       });
+
+    return () => {
+      unsubscribe();
+    };
   }, [currentUser?.email]);
 
   if (isLoading) {

@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import CustomAlert from '../CustomAlert';
 import useResetForm from '../form/useResetForm';
+import useIsMountedRef from '../../hooks/useIsMountedRef';
 
 interface LoginFormData {
   email: string;
@@ -15,6 +16,7 @@ interface LoginFormData {
 const Login: React.FC = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const isMountedRef = useIsMountedRef();
 
   const methods = useForm<LoginFormData>();
   useResetForm(methods.reset, methods.clearErrors);
@@ -26,14 +28,10 @@ const Login: React.FC = (props) => {
     setErrorMessage(null);
     setIsLoading(true);
 
-    try {
-      await login(email, password);
-
-      history.push('/');
-    } catch (e) {
-      setErrorMessage(e.message);
-    }
-    setIsLoading(false);
+    login(email, password)
+      .then(() => isMountedRef.current && history.push('/'))
+      .catch((e) => isMountedRef.current && setErrorMessage(e.message))
+      .finally(() => isMountedRef.current && setIsLoading(false));
   }
 
   const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;

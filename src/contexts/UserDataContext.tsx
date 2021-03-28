@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import firebase from 'firebase';
 import { DocumentSnapshot, firestore } from '../config/firebase';
 import { User, UserRoles } from '../types/User';
@@ -26,7 +26,6 @@ const UserDataContext = createContext<UserDataContextType | null>(null);
 const UserDataProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-
   const { authUserData } = useAuth()!;
 
   //fetch the logged in user data from firestore
