@@ -31,13 +31,14 @@ const UserCard: React.FC<Props> = (props) => {
     <VStack
       p={3}
       mb={2}
-      w="50%"
+      w="60%"
       border="1px solid lightgray"
       borderRadius={4}
       shadow="lg"
       position="relative"
+      overflow={'auto'}
     >
-      <Flex mb={0} pb={2} w="100%" justify="center" borderBottom="1px solid gray">
+      <Flex mb={0} pb={3} w="100%" justify="center" borderBottom="1px solid gray">
         <FaUserCircle fontSize={60} />
       </Flex>
       <HStack w="100%" justify="flex-start">
@@ -49,7 +50,7 @@ const UserCard: React.FC<Props> = (props) => {
           <HStack>
             <Text>Role: </Text>
             <Text color={colorMode === 'light' ? 'cyan.800' : '#eebe60'} fontWeight={valueFont}>
-              {role}
+              {role || 'Viewer'}
             </Text>
           </HStack>
           <HStack>

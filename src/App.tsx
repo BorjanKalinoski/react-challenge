@@ -7,14 +7,6 @@ import Login from './components/pages/Login';
 import ProtectedRoute from './components/routes/ProtectedRoute';
 import UserDataProvider from './contexts/UserDataContext';
 
-//TODO
-//2. Style header in color mode
-//3. Add permissions in firebase auth
-// -read permissions
-// -delete permissions
-// -assign roles permissions
-// -edit permissions
-
 function App() {
   return (
     <Router>

@@ -7,12 +7,12 @@ import Loading from '../Loading';
 import { useUserData } from '../../contexts/UserDataContext';
 
 const UsersList: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   const { currentUser } = useUserData()!;
 
-  //fetch other users
+  //set up listener to fetch all other users
   useEffect(() => {
     firestore
       .collection('users')

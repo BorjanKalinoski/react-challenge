@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { UserRoles } from '../../types/User';
@@ -42,18 +42,11 @@ const Register: React.FC = (props) => {
     setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   return () => {
-  //     setErrorMessage(null);
-  //     setIsLoading(false);
-  //   };
-  // }, []);
-
   const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;
 
   return (
     <FormProvider {...methods}>
-      <Box w="100%" maxW="400px" m="auto" mt={10}>
+      <Box w="90%" maxW="400px" m="auto" mt={10}>
         <Box border="1px solid lightgray" borderRadius={4} p={4}>
           <Text fontSize="3xl" textAlign={'center'} fontWeight={'bold'} mb={2}>
             Register

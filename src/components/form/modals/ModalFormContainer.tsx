@@ -12,7 +12,7 @@ const ModalFormContainer: React.FC<Props> = (props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent minWidth={300} maxWidth={450} w="90%" mx="auto">
         <ModalCloseButton />
         <ModalBody pb={6}>{children}</ModalBody>
       </ModalContent>

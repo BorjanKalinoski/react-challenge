@@ -22,6 +22,8 @@ interface Props {
   onClose: () => void;
 }
 
+//Pri kreiranje na nov user, sakam da se pojavi default value Viewer dokolku nemam privilegii za editiranje
+
 const CreateUserModalForm: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props; // hook for modal dialog
 

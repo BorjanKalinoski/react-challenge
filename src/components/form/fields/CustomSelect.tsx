@@ -1,8 +1,9 @@
 import React from 'react';
 import { FormControl, FormErrorMessage, FormLabel, Select } from '@chakra-ui/react';
 import { useFormContext } from 'react-hook-form';
+import { SelectProps } from '@chakra-ui/select/dist/types/select';
 
-interface Props {
+interface Props extends SelectProps {
   name: string;
   label: string;
   required?: boolean;

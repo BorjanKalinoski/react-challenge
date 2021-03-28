@@ -36,7 +36,7 @@ const EditUserModalForm: React.FC<Props> = (props) => {
   const methods = useForm<EditUserFormData>();
   useResetForm(methods.reset, methods.clearErrors);
 
-  const { canAssignRoles, editUser } = useUserData()!;
+  const { editUser, canAssignRoles } = useUserData()!;
 
   const submitForm = async (formData: EditUserFormData) => {
     setIsLoading(true);

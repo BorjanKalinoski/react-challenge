@@ -40,7 +40,7 @@ const Login: React.FC = (props) => {
 
   return (
     <FormProvider {...methods}>
-      <Box w="100%" maxW="500px" m="auto" mt={10}>
+      <Box w="90%" maxW="500px" m="auto" mt={10}>
         <Box border="1px solid lightgray" borderRadius={4} p={4}>
           <Text fontSize="3xl" textAlign={'center'} fontWeight={'bold'} mb={2}>
             Login
