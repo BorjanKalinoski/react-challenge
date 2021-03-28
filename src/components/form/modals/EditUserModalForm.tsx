@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Button, Text } from '@chakra-ui/react';
 import { User, UserRoles } from '../../../types/User';
-import { useUserData } from '../../../contexts/UserDataContext';
 import CustomAlert from '../../CustomAlert';
 import ModalFormContainer from './ModalFormContainer';
 import CustomTextInput from '../fields/CustomTextInput';
 import CustomSelect from '../fields/CustomSelect';
 import useResetForm from '../useResetForm';
+import { useUserData } from '../../../contexts/UserDataContext';
 
 interface Props {
   isOpen: boolean;

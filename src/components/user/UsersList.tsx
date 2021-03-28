@@ -3,8 +3,8 @@ import { firestore } from '../../config/firebase';
 import { User } from '../../types/User';
 import { Text } from '@chakra-ui/react';
 import UserCard from './UserCard';
-import { useUserData } from '../../contexts/UserDataContext';
 import Loading from '../Loading';
+import { useUserData } from '../../contexts/UserDataContext';
 
 const UsersList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);

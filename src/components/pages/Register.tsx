@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, Text, HStack } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { UserRoles } from '../../types/User';
 import CustomTextInput from '../form/fields/CustomTextInput';
 import CustomSelect from '../form/fields/CustomSelect';
 import { Link, useHistory } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import CustomAlert from '../CustomAlert';
-import { useUserData } from '../../contexts/UserDataContext';
 import useResetForm from '../form/useResetForm';
+import { useUserData } from '../../contexts/UserDataContext';
 
 interface RegisterFormData {
   name: string;
@@ -21,8 +20,7 @@ const Register: React.FC = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const { signup } = useAuth()!;
-  const { storeUser } = useUserData()!;
+  const { createUser } = useUserData()!;
 
   const history = useHistory();
 
@@ -34,15 +32,22 @@ const Register: React.FC = (props) => {
     setIsLoading(true);
 
     try {
-      const response = await signup(formData.email, formData.password);
-      await storeUser(response.user?.uid!, formData);
-
+      await createUser(formData);
+      setErrorMessage(null);
+      setIsLoading(false);
       history.push('/login');
     } catch (e) {
       setErrorMessage(e.message);
     }
     setIsLoading(false);
   }
+
+  // useEffect(() => {
+  //   return () => {
+  //     setErrorMessage(null);
+  //     setIsLoading(false);
+  //   };
+  // }, []);
 
   const displayErrorMessage = errorMessage !== null && <CustomAlert message={errorMessage!} />;
 

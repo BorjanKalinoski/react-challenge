@@ -4,9 +4,9 @@ import { Text, VStack, HStack, useDisclosure, useColorMode, Flex } from '@chakra
 import { CloseIcon, EditIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 import { FaUserCircle } from 'react-icons/fa';
-import { useUserData } from '../../contexts/UserDataContext';
 import EditUserModalForm from '../form/modals/EditUserModalForm';
 import { UserRoles } from '../../types/User';
+import { useUserData } from '../../contexts/UserDataContext';
 
 interface Props {
   name: string;

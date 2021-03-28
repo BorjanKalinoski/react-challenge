@@ -1,48 +1,78 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, UserCredential, FirebaseUser } from '../config/firebase';
+import { firestore } from '../config/firebase';
+import { User } from '../types/User';
+
+interface AuthUserData {
+  id: string;
+}
 
 type AuthContextType = {
-  userAuthData: FirebaseUser | null;
-  signup: (email: string, password: string) => Promise<UserCredential>;
-  login: (email: string, password: string) => Promise<UserCredential>;
+  // authUserData: User | null;
+  authUserData: AuthUserData | null;
+
+  isLoadingUser: boolean;
+
+  login: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
+
+//TODO
+// 1. Check if user exists on sign up
+// 2. See if you can merge the two providers
+//  - protected route, etc etc
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider: React.FC = ({ children }) => {
-  const [userAuthData, setUserAuthData] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authUserData, setAuthUserData] = useState<AuthUserData | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  async function signup(email: string, password: string) {
-    return auth.createUserWithEmailAndPassword(email, password);
-  }
+  const authUserDataStorageRef = 'authUserData';
 
   async function login(email: string, password: string) {
-    return auth.signInWithEmailAndPassword(email, password);
+    const snapshot = await firestore
+      .collection('users')
+      .where('email', '==', email)
+      .where('password', '==', password)
+      .get();
+
+    if (snapshot.size !== 1) {
+      throw new Error('Invalid credentials or the user does not exist');
+    }
+
+    const authUserData = {
+      id: snapshot.docs[0].id,
+    };
+
+    localStorage.setItem(authUserDataStorageRef, JSON.stringify(authUserData));
+
+    setAuthUserData(authUserData);
+    setIsLoadingUser(false);
   }
 
   async function signOut(): Promise<void> {
-    return auth.signOut();
+    localStorage.removeItem(authUserDataStorageRef);
+    setAuthUserData(null);
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUserAuthData(user);
-      setLoading(false);
-    });
+    const data = localStorage.getItem(authUserDataStorageRef);
 
-    return unsubscribe;
+    if (data) {
+      setAuthUserData(JSON.parse(data));
+    }
+
+    setIsLoadingUser(false);
   }, []);
 
   const value = {
-    userAuthData,
-    signup,
+    authUserData,
+    isLoadingUser,
     login,
     signOut,
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{!isLoadingUser && children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

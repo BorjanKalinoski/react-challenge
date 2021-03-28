@@ -1,21 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import firebase from 'firebase';
-import { adminAuth, DocumentSnapshot, firestore } from '../config/firebase';
-import { useAuth } from './AuthContext';
+import { DocumentSnapshot, firestore } from '../config/firebase';
 import { User, UserRoles } from '../types/User';
+import { useAuth } from './AuthContext';
 
 type UserDataContextType = {
   currentUser: User | null;
   isLoadingUser: boolean;
 
-  //user crud
+  //User CRUD
   fetchUser: (id: string) => Promise<DocumentSnapshot>;
   deleteUser: (id: string) => Promise<void>;
   editUser: (user: User, id: string) => Promise<void>;
-  storeUser: (id: string, user: User) => Promise<void>;
-  createNewUser: (user: User) => Promise<void>;
+  createUser: (user: User) => Promise<void>;
 
-  //user permissions
+  //User permissions
   canDelete: () => boolean;
   canEdit: () => boolean;
   canAssignRoles: () => boolean;
@@ -28,26 +27,25 @@ const UserDataProvider: React.FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  const { userAuthData } = useAuth()!;
+  const { authUserData } = useAuth()!;
 
-  //fetch user data for the currently logged in user
+  //fetch the logged in user data from firestore
   useEffect(() => {
-    const id = userAuthData?.uid;
+    const id = authUserData?.id;
+
     if (id !== undefined) {
       fetchUser(id)
         .then((doc) => {
-          if (!doc.exists) {
-            throw new Error('User not found'); //should not happen, just in case
+          if (doc.exists) {
+            setCurrentUser({
+              ...(doc.data() as User),
+              id: doc.id,
+            });
           }
-          setCurrentUser({
-            id: doc.id,
-            ...(doc.data() as User),
-          });
         })
-        .catch((e) => setCurrentUser(null))
         .finally(() => setIsLoadingUser(false));
     }
-  }, [userAuthData]);
+  }, [authUserData]);
 
   ///////////////////
   //USER CRUD OPERATIONS
@@ -60,36 +58,38 @@ const UserDataProvider: React.FC = ({ children }) => {
     return firestore.collection('users').doc(id).delete();
   }
 
-  async function editUser(user: User, id: string) {
-    return firestore.collection('users').doc(id).set(user, {
+  async function editUser(userData: User, id: string) {
+    // make sure the new email does not exists on other accounts
+
+    const snapshot = await firestore
+      .collection('users')
+      .where('email', '==', userData.email)
+      .where('id', '!=', id)
+      .get();
+
+    if (snapshot.size >= 1) {
+      throw new Error('User with the same email address already exists');
+    }
+
+    return firestore.collection('users').doc(id).set(userData, {
       merge: true,
     });
   }
 
-  async function storeUser(id: string, user: User) {
-    delete user.password;
+  async function createUser(userData: User) {
+    const snapshot = await firestore.collection('users').where('email', '==', userData.email).get();
 
-    return firestore
-      .collection('users')
-      .doc(id)
-      .set({
-        ...user,
-        createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-      });
-  }
-
-  async function createNewUser(user: User) {
-    const snapshot = await firestore.collection('users').where('email', '==', user.email).get();
-
-    if (snapshot.size === 1) {
-      throw new Error('User already exists!');
+    if (snapshot.size !== 0) {
+      throw new Error('User with the same email address already exists');
     }
 
-    const response = await adminAuth.createUserWithEmailAndPassword(user.email, user.password!);
+    const nextDocumentRef = firestore.collection('users').doc();
 
-    delete user.password;
-
-    return storeUser(response.user?.uid!, user);
+    return nextDocumentRef.set({
+      ...userData,
+      id: nextDocumentRef.id,
+      createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+    });
   }
 
   ///////////////////
@@ -118,8 +118,7 @@ const UserDataProvider: React.FC = ({ children }) => {
     fetchUser,
     deleteUser,
     editUser,
-    storeUser,
-    createNewUser,
+    createUser,
     canDelete,
     canEdit,
     canAssignRoles,

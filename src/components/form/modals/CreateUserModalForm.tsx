@@ -31,13 +31,13 @@ const CreateUserModalForm: React.FC<Props> = (props) => {
   const methods = useForm<CreateUserFormData>();
   useResetForm(methods.reset, methods.clearErrors);
 
-  const { canAssignRoles, createNewUser } = useUserData()!;
+  const { canAssignRoles, createUser } = useUserData()!;
 
   const submitForm = async (formData: CreateUserFormData) => {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      await createNewUser(formData as User);
+      await createUser(formData as User);
       onClose();
     } catch (e) {
       setErrorMessage(e.message);

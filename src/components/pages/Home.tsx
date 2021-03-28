@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Button, VStack, useDisclosure } from '@chakra-ui/react';
-import { useUserData } from '../../contexts/UserDataContext';
 import CreateUserModalForm from '../form/modals/CreateUserModalForm';
 import Header from '../Header';
 import UsersList from '../user/UsersList';
 import Loading from '../Loading';
+import { useUserData } from '../../contexts/UserDataContext';
 
 const Home: React.FC = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();

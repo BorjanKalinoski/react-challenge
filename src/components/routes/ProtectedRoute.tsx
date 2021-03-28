@@ -8,12 +8,12 @@ interface Props extends RouteProps {
 }
 
 const ProtectedRoute: React.FC<Props> = ({ component: Component, ...others }) => {
-  const { userAuthData } = useAuth()!;
+  const { authUserData } = useAuth()!;
 
   return (
     <Route
       {...others}
-      render={(props) => (userAuthData ? <Component {...props} /> : <Redirect to="/login" />)}
+      render={(props) => (authUserData ? <Component {...props} /> : <Redirect to="/login" />)}
     />
   );
 };

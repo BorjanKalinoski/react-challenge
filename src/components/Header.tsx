@@ -1,13 +1,14 @@
 import React from 'react';
 import { Button, Flex, Text, HStack, useColorMode } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { useUserData } from '../contexts/UserDataContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useHistory } from 'react-router-dom';
+import { useUserData } from '../contexts/UserDataContext';
 
 const Header: React.FC = (props) => {
-  const { currentUser } = useUserData()!;
-
   const { signOut } = useAuth()!;
+  const { currentUser } = useUserData()!;
+  const history = useHistory();
 
   const { colorMode, toggleColorMode } = useColorMode();
 
